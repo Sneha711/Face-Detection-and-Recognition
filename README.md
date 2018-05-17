@@ -12,6 +12,7 @@ Code for Face Detection and Recognition using Eigenfaces Algorithm with OpenCV i
 ### How it Works
 
 * Step 1
+
 `trainerEigen.py`: Prepares training data. 
 1] Detects faces in the video frame.
 2] Assign each detected face an integer label(id) of the person it belongs to.
@@ -19,6 +20,7 @@ Code for Face Detection and Recognition using Eigenfaces Algorithm with OpenCV i
 4] 25 images for each person is taken.
 
 * Step 2
+
 `faceRecogEigen.py`:  
 1] Trains OpenCV's EigenFace Recognizer by feeding the data prepared in Step 1.
 2] Performs prediction on Real time video frame.
