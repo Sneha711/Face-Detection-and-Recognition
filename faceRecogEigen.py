@@ -6,7 +6,7 @@ from PIL import Image #Importing python image library
 
 path="/home/sneha/faces"  #Path to the folder in which the training faces are stored
 
-#Method to get images and ids
+#Method to get images and ids, this function is for preparing the training data
 def getImagesWithID(path):
     imagePaths=[posixpath.join(path,f) for f in os.listdir(path)] #Get all file path
     facesh=[] #Initializing empty face list
@@ -27,9 +27,9 @@ def getImagesWithID(path):
 
 
 def facerec():
-    Ids,facesh=getImagesWithID(path)
-    recognizer = cv2.face.createEigenFaceRecognizer() 
-    recognizer.train(facesh,np.array(Ids)) #Training the model using faces and ids
+    Ids,facesh=getImagesWithID(path) 
+    recognizer = cv2.face.createEigenFaceRecognizer() #creating EigenFaceRecognizer
+    recognizer.train(facesh,np.array(Ids)) #Training the model using faces and ids(training data)
     
     cascadePath = "/home/sneha/opencv/data/haarcascades/haarcascade_frontalface_default.xml"
     faceCascade = cv2.CascadeClassifier(cascadePath); # Creating classifier from prebuilt model
