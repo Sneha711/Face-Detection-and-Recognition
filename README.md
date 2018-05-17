@@ -26,6 +26,7 @@ Code for Face Detection and Recognition using Eigenfaces Algorithm with OpenCV i
 * Step 2
 
 `faceRecogEigen.py`:  
+
 1] Trains OpenCV's EigenFace Recognizer by feeding the data prepared in Step 1.
 
 2] Performs prediction on Real time video frame.
