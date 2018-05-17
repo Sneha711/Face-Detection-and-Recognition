@@ -5,8 +5,6 @@ Code for Face Detection and Recognition using Eigenfaces Algorithm with OpenCV i
 
 * Python 2.7
 * OpenCV
-* Other requirements are listed in requirements.txt file and can be installed by running the following command: 
-`pip install -r requirements.txt`
 
 
 ### How it Works
