@@ -1,61 +1,44 @@
-import posixpath
-import os #Importing os for file path
+#Register in DB
 import cv2
-import numpy as np
-from PIL import Image #Importing python image library
-
-path="/home/sneha/faces"  #Path to the folder in which the training faces are stored
-
-#Method to get images and ids
-def getImagesWithID(path):
-    imagePaths=[posixpath.join(path,f) for f in os.listdir(path)] #Get all file path
-    facesh=[] #Initializing empty face list
-    IDs=[] #Initializing empty face list
-    for imagePath in imagePaths:
-        #print(imagePath)
-        faceImg=Image.open(imagePath).convert('L') #Converting the images into grayscale 
-        faceNp=np.array(faceImg,'uint8') #PIL image to numpy array
-        
-        ID=int(os.path.split(imagePath)[-1].split('.')[1]) #Splitting the path and filename to get the id
-        
-        facesh.append(faceNp) #add faces to facesh list
-        #print(ID)
-        IDs.append(ID) #add ids to IDs list
-        #cv2.imshow("training",faceNp)
-        #cv2.waitKey(10)
-    return IDs,facesh 
-
-
-def facerec():
-    Ids,facesh=getImagesWithID(path)
-    recognizer = cv2.face.createEigenFaceRecognizer() 
-    recognizer.train(facesh,np.array(Ids)) #Training the model using faces and ids
+import os
+import numpy as np,sys
+from PIL import Image
+import posix
+class faceRecogEigen:
+    face_cascade=cv2.CascadeClassifier('/home/sneha/opencv/data/haarcascades/haarcascade_frontalface_default.xml')
+#eye_cascade=cv2.CascadeClassifier('/home/shivani/opencv/data/haarcascades/haarcascade_eye.xml')
+    cap=cv2.VideoCapture(0)
+    print cap.isOpened()
+    if not(cap.isOpened()): 
+        cap.open() 
     
-    cascadePath = "/home/sneha/opencv/data/haarcascades/haarcascade_frontalface_default.xml"
-    faceCascade = cv2.CascadeClassifier(cascadePath); # Creating classifier from prebuilt model
-    cam = cv2.VideoCapture(0)
-    #font = cv2.InitFont(cv2.FONT_HERSHEY_SIMPLEX, 1, 1, 0, 1, 1)
+    id=input('Enter the user id : ')
+    sampleNum=0;
     while True:
-        ret,im =cam.read()
-        #print(im.shape[0],im.shape[1])
-        minisize = (im.shape[1],im.shape[0])
-        miniframe = cv2.resize(im, minisize)
-        #print(im.shape[0],im.shape[1])
-        gray=cv2.cvtColor(miniframe,cv2.COLOR_BGR2GRAY)
-        #gray=cv2.cvtColor(im,cv2.COLOR_BGR2GRAY)
-        faces=faceCascade.detectMultiScale(gray, 1.3,5)
-        for(x,y,w,h) in faces:
-            cv2.rectangle(im,(x,y),(x+w,y+h),(225,0,0),2)  # Creating rectangle around the face
-            #f=cv2.resize(gray[y:y+h,x:x+w],(200,200))
+        ret,img=cap.read()
+        #img=img[200:400,100:300]
+        #gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+        minisize = (img.shape[1],img.shape[0])
+        miniframe = cv2.resize(img, minisize)
+        gray=cv2.cvtColor(miniframe,cv2.COLOR_BGR2GRAY) #Converting the image into grayscale
+        
+        
+        faces=face_cascade.detectMultiScale(gray,scaleFactor=1.1,minNeighbors=5)
+        for(x,y,w,h) in faces :
+            sampleNum=sampleNum+1;
+            cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)  #Blue color 255,0,0
             f=cv2.resize(gray[y:y+h,x:x+w],(200,200))
-            Id, conf = recognizer.predict(f) # Recognize which face belongs to which ID
-            #print(h)
-            cv2.putText(im,str(Id), (x+5,y+h-20),cv2.FONT_HERSHEY_SIMPLEX,2, 255,3)  # Displays the id in the rectangle
-        cv2.imshow('face',im)  # Display the video frame with the bounded rectangle
-        if cv2.waitKey(10) & 0xFF==ord('q'): #Press q to exit
-            break
-    cam.release()
-    cv2.destroyAllWindows()
+           # f=cv2.resize(gray[y:y+h,x:x+w],(200,200))
+            equ=cv2.equalizeHist(f) #Histogram equalization
+            blur = cv2.bilateralFilter(equ,0,20.0,22.0) #Smoothing
+            
 
-#Calling the facerec() function
-facerec()
+        cv2.imwrite("/home/sneha/faces/User."+str(id)+"."+str(sampleNum)+".pgm",blur) #Saving the captured images as User.id.samplenumber
+        cv2.imshow('img',img)
+	#k=cv2.waitKey(0)    #infinte waiting
+        cv2.waitKey(100) #if i press q it'll break
+        if(sampleNum>25):
+            break	
+
+    cap.release()
+    cv2.destroyAllWindows()	
